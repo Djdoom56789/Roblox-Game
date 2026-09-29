@@ -8,7 +8,83 @@ Config.Player = {
 	StaminaRegenDelay = 0.8, -- seconds after spending stamina before it refills
 	WalkSpeed = 14,
 	MaxPoise = 50,
+	MaxMana = 120,
+	ManaRegenPerSecond = 8,
+	ManaRegenDelay = 1.5,
 }
+
+Config.Weapon = {
+	Length = 7,
+	GripOffset = CFrame.new(0, -0.25, 0),
+	RestAngle = -30, -- blade pitch in degrees; negative points the tip down
+}
+
+-- Spells are learned from scrolls, picked on the spell wheel, and cast with the cast key.
+Config.Spells = {
+	Zoltraak = {
+		DisplayName = "Zoltraak",
+		Description = "Ordinary offensive magic. A fast bolt that strikes the first foe in its path.",
+		Icon = "Z",
+		Color = Color3.fromRGB(190, 160, 255),
+		Mana = 15,
+		Cooldown = 0.8,
+		CastTime = 0.25,
+		Recovery = 0.25,
+		MoveSpeed = 8,
+		Damage = 40,
+		PoiseDamage = 15,
+		Range = 150,
+	},
+	Judradjim = {
+		DisplayName = "Judradjim",
+		Description = "Calls a bolt of lightning down on the target area after a short delay.",
+		Icon = "J",
+		Color = Color3.fromRGB(255, 220, 110),
+		Mana = 35,
+		Cooldown = 5,
+		CastTime = 0.5,
+		Recovery = 0.4,
+		MoveSpeed = 4,
+		Damage = 70,
+		PoiseDamage = 50,
+		Range = 90,
+		Radius = 10,
+		Delay = 0.6,
+	},
+	Catastravia = {
+		DisplayName = "Catastravia",
+		Description = "A rain of light arrows that falls across a wide area.",
+		Icon = "C",
+		Color = Color3.fromRGB(150, 230, 255),
+		Mana = 50,
+		Cooldown = 10,
+		CastTime = 0.7,
+		Recovery = 0.5,
+		MoveSpeed = 2,
+		Damage = 16,
+		PoiseDamage = 12,
+		Range = 90,
+		Radius = 14,
+		Arrows = 12,
+		ArrowRadius = 4,
+		Duration = 1.2,
+	},
+	Barrier = {
+		DisplayName = "Defensive Magic",
+		Description = "A barrier of mana that blocks all damage for a moment.",
+		Icon = "B",
+		Color = Color3.fromRGB(110, 170, 255),
+		Mana = 25,
+		Cooldown = 6,
+		CastTime = 0.1,
+		Recovery = 0.2,
+		MoveSpeed = 10,
+		Duration = 1.5,
+	},
+}
+
+-- Order spells appear in on the wheel and for the number-key quick slots.
+Config.SpellOrder = { "Zoltraak", "Judradjim", "Catastravia", "Barrier" }
 
 -- Greatsword attacks. Timings are in seconds: Windup -> Active (hitbox live) -> Recovery.
 Config.Attacks = {
@@ -79,6 +155,10 @@ Config.Keybinds = {
 	Heavy = { Enum.KeyCode.F, Enum.KeyCode.ButtonR2 },
 	Dodge = { Enum.KeyCode.Q, Enum.KeyCode.ButtonB },
 	LockOn = { Enum.KeyCode.Tab, Enum.UserInputType.MouseButton3, Enum.KeyCode.ButtonR3 },
+	Cast = { Enum.KeyCode.E, Enum.KeyCode.ButtonL1 },
+	SpellWheel = { Enum.KeyCode.G, Enum.KeyCode.ButtonL2 }, -- hold to open, release to equip
 }
+
+Config.QuickSlotKeys = { Enum.KeyCode.One, Enum.KeyCode.Two, Enum.KeyCode.Three, Enum.KeyCode.Four }
 
 return Config

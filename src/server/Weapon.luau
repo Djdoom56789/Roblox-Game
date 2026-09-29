@@ -1,23 +1,9 @@
--- Gives characters a placeholder greatsword and swings it with simple weld tweens
--- until real animations are made.
-local TweenService = game:GetService("TweenService")
+-- Gives characters a placeholder greatsword. Clients animate it (see client/Animations).
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared").Config)
 
 local Weapon = {}
-
-local BLADE_LENGTH = 7
-local GRIP = CFrame.new(0, -0.25, 0)
-
--- Pitch of the blade relative to the hand, in degrees. Negative points the tip down.
-local POSES = {
-	Rest = -30,
-	LightRaise = 60,
-	HeavyRaise = 110,
-	Strike = -75,
-}
-
-local function pose(degrees)
-	return GRIP * CFrame.Angles(math.rad(degrees), 0, 0)
-end
 
 function Weapon.equip(character)
 	local humanoid = character:WaitForChild("Humanoid", 10)
@@ -30,9 +16,10 @@ function Weapon.equip(character)
 		return
 	end
 
+	local length = Config.Weapon.Length
 	local blade = Instance.new("Part")
 	blade.Name = "Greatsword"
-	blade.Size = Vector3.new(0.3, 1.2, BLADE_LENGTH)
+	blade.Size = Vector3.new(0.3, 1.2, length)
 	blade.Color = Color3.fromRGB(58, 56, 60)
 	blade.Material = Enum.Material.Metal
 	blade.CanCollide = false
@@ -40,41 +27,32 @@ function Weapon.equip(character)
 	blade.CanTouch = false
 	blade.Massless = true
 
-	local weld = Instance.new("Weld")
-	weld.Name = "Grip"
-	weld.Part0 = hand
-	weld.Part1 = blade
-	weld.C0 = pose(POSES.Rest)
-	weld.C1 = CFrame.new(0, 0, BLADE_LENGTH / 2 - 0.6)
-	weld.Parent = blade
+	local hilt = Instance.new("Part")
+	hilt.Name = "Hilt"
+	hilt.Size = Vector3.new(0.4, 1.8, 0.3)
+	hilt.Color = Color3.fromRGB(40, 30, 24)
+	hilt.Material = Enum.Material.Wood
+	hilt.CanCollide = false
+	hilt.CanQuery = false
+	hilt.CanTouch = false
+	hilt.Massless = true
+	hilt.CFrame = blade.CFrame * CFrame.new(0, 0, length / 2 - 1.2)
+
+	local hiltWeld = Instance.new("WeldConstraint")
+	hiltWeld.Part0 = blade
+	hiltWeld.Part1 = hilt
+	hiltWeld.Parent = hilt
+	hilt.Parent = blade
+
+	local grip = Instance.new("Weld")
+	grip.Name = "Grip"
+	grip.Part0 = hand
+	grip.Part1 = blade
+	grip.C0 = Config.Weapon.GripOffset * CFrame.Angles(math.rad(Config.Weapon.RestAngle), 0, 0)
+	grip.C1 = CFrame.new(0, 0, length / 2 - 0.6)
+	grip.Parent = blade
 
 	blade.Parent = character
-end
-
-function Weapon.swing(character, kind, attack, isCurrent)
-	local blade = character:FindFirstChild("Greatsword")
-	local weld = blade and blade:FindFirstChild("Grip")
-	if not weld then
-		return
-	end
-
-	local function tweenTo(degrees, duration, style)
-		TweenService:Create(weld, TweenInfo.new(duration, style), { C0 = pose(degrees) }):Play()
-	end
-
-	local raise = if kind == "Heavy" then POSES.HeavyRaise else POSES.LightRaise
-	tweenTo(raise, attack.Windup, Enum.EasingStyle.Quad)
-
-	task.delay(attack.Windup, function()
-		if not isCurrent() then
-			tweenTo(POSES.Rest, 0.2, Enum.EasingStyle.Quad)
-			return
-		end
-		tweenTo(POSES.Strike, attack.Active, Enum.EasingStyle.Quart)
-		task.delay(attack.Active, function()
-			tweenTo(POSES.Rest, attack.Recovery, Enum.EasingStyle.Sine)
-		end)
-	end)
 end
 
 return Weapon

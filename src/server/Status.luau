@@ -1,5 +1,6 @@
 -- Tracks per-character action state (busy, staggered, invulnerable) on the server.
--- Busy and Staggered are mirrored to attributes on the model so clients can read them.
+-- Busy and Staggered are mirrored to attributes on the model so clients can read them,
+-- and "Action" is set to "<animation>#<id>" so every client can play the animation.
 local Status = {}
 
 local states = setmetatable({}, { __mode = "k" })
@@ -46,9 +47,10 @@ end
 
 -- Starts an action that locks the character for `duration`. Returns an id that stops
 -- being current if the action is interrupted.
-function Status.startAction(model, duration, moveSpeed)
+function Status.startAction(model, duration, moveSpeed, animation)
 	local state = get(model)
 	state.actionId += 1
+	model:SetAttribute("Action", animation .. "#" .. state.actionId)
 	state.busyUntil = os.clock() + duration
 	state.busySpeed = moveSpeed
 	refresh(model)
@@ -71,6 +73,7 @@ end
 function Status.stagger(model, duration)
 	local state = get(model)
 	state.actionId += 1
+	model:SetAttribute("Action", "Stagger#" .. state.actionId)
 	state.busyUntil = 0
 	state.staggerUntil = math.max(state.staggerUntil, os.clock() + duration)
 	refresh(model)
@@ -78,7 +81,8 @@ function Status.stagger(model, duration)
 end
 
 function Status.setInvulnerable(model, duration)
-	get(model).invulnerableUntil = os.clock() + duration
+	local state = get(model)
+	state.invulnerableUntil = math.max(state.invulnerableUntil, os.clock() + duration)
 end
 
 function Status.isInvulnerable(model)

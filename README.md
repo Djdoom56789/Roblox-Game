@@ -16,6 +16,9 @@ A dark fantasy action RPG for Roblox inspired by Elden Ring, Berserk, and Friere
 | Heavy attack            | F                     | R2      |
 | Dodge roll              | Q                     | B       |
 | Lock on / off           | Tab or middle click   | R3      |
+| Cast equipped spell     | E                     | L1      |
+| Spell wheel (hold, release to equip) | G        | L2      |
+| Quick equip spell 1-4   | 1-4                   |         |
 
 Rebind these in `src/shared/Config.luau` under `Config.Keybinds`. All combat numbers
 (damage, stamina costs, timings, poise) live in the same file.
@@ -30,7 +33,22 @@ Rebind these in `src/shared/Config.luau` under `Config.Keybinds`. All combat num
 - Red boxes show attack hitboxes while `Config.Debug.ShowHitboxes` is on.
 - PvP is off by default (`Config.Combat.PvP`).
 
-The greatsword is a placeholder part swung with simple tweens until real animations exist.
+## Magic
+
+Spell scrolls sit on pedestals beside the spawn. Read one to learn its spell, then pick
+spells on the wheel. Spells use mana (MP), which regenerates slowly, and have cooldowns.
+
+| Spell            | Effect                                             |
+| ---------------- | -------------------------------------------------- |
+| Zoltraak         | Fast bolt that hits the first enemy in its path    |
+| Judradjim        | Lightning strike on the target area after a delay  |
+| Catastravia      | Rain of light arrows over a wide area              |
+| Defensive Magic  | Barrier that blocks all damage for a moment        |
+
+Spells aim at your lock-on target, or wherever your mouse points.
+
+Attacks, casts, dodges, and staggers use procedural animations (tweened R15 joints) in
+`src/client/Animations.luau`, so they need an R15 character.
 
 ## Layout
 
